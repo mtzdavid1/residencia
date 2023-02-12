@@ -193,6 +193,38 @@ const DetallesEmpleado = () => {
                       {customers.estado}
                     </dd>
                   </div>
+                  <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">
+                      Hora de Entrada
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {customers.horaEntrada}
+                    </dd>
+                  </div>
+                  <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">
+                      Hora de Salida
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {customers.horaSalida}
+                    </dd>
+                  </div>
+                  <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">
+                      Hora de Salida a lunch
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {customers.horaSalidaLunch}
+                    </dd>
+                  </div>
+                  <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">
+                      Hora de Entrada de lunch
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {customers.horaEntradaLunch}
+                    </dd>
+                  </div>
                   <button
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-12"
                     onClick={() =>
