@@ -1,29 +1,36 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Image01 from "../images/user-40-01.jpg";
+import swal from "@sweetalert/with-react";
 
 const AgregarEmpleado = () => {
   const navigate = useNavigate();
-  const id = useParams();
-  console.log(id)
+  const { id } = useParams();
+  const { state } = useLocation();
+  console.log(state);
   const [data, setData] = useState({
-    id: "0",
+    id: id,
     image: Image01,
-    nombreCompleto: "Patricia Semklo",
-    FechaNacimiento: "12/11/1999",
-    correoElectronico: "patricia.semklo@app.com",
-    telefono: "664-480-3438",
-    estado: "Activo",
-    puesto: "",
-    salarioBruto: "10000",
-    salarioNeto: "9000",
-    salarioDiario: "500",
-    horasLaborales: "8",
-    fechaIngreso: new Date(),
+    nombreCompleto: state.customers.nombreCompleto,
+    FechaNacimiento: state.customers.fechaNacimiento,
+    correoElectronico: state.customers.correo,
+    telefono: state.customers.telefono,
+    estado: state.customers.estado,
+    puesto: state.customers.puesto,
+    salarioBruto: state.customers.salarioBruto,
+    salarioNeto: state.customers.salarioNeto,
+    salarioDiario: state.customers.salarioDiario,
+    horasLaborales: state.customers.horasLaborales,
+    fechaIngreso: state.customers.fechaIngreso,
+    horarioEntrada: state.customers.horarioEntrada,
+    horarioSalida: state.customers.horarioSalida,
+    horarioSalidaLunch: state.customers.horarioSalidaLunch,
+    horarioEntradaLunch: state.customers.horarioEntradaLunch,
   });
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleOnChanged = (e) => {
@@ -34,29 +41,23 @@ const AgregarEmpleado = () => {
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     await axios
-      .put(`http://localhost:3001/api/editar/empleados/:${id}`, data)
-      .then((res) => alert(res.data))
+      .put(`http://localhost:3001/api/editar/empleados/${id}`, data)
+      .then((res) =>
+        swal(
+          "Registro exitoso!",
+          "Se ha editado el empleado exitosamente!",
+          "success"
+        ).then(() => {
+          navigate(-1);
+        })
+      )
       .catch((err) => alert(err));
-
-    setData({
-      id: "",
-      image: "",
-      nombreCompleto: "",
-      FechaNacimiento: "",
-      correoElectronico: "",
-      telefono: "",
-      estado: "",
-      puesto: "",
-      salarioBruto: "",
-      salarioNeto: "",
-      salarioDiario: "",
-      horasLaborales: "",
-      fechaIngreso: "",
-    });
   };
 
   useEffect(() => {
-    if (!localStorage.getItem("rol")) {
+    let rol = localStorage.getItem("rol");
+    if (rol !== "Admin" && rol !== "RH" && rol !== "IT") {
+      swal("Error", "No tienes permisos para acceder a esta página", "error");
       navigate("/login");
     }
   }, []);
@@ -99,7 +100,7 @@ const AgregarEmpleado = () => {
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="nombreCompleto"
                                 type="text"
-                                placeholder="Nombre Completo"
+                                placeholder={data.nombreCompleto}
                               />
                             </div>
                             <div className="mb-4">
@@ -115,7 +116,7 @@ const AgregarEmpleado = () => {
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="FechaNacimiento"
                                 type="date"
-                                placeholder="Fecha de Nacimiento"
+                                placeholder={data.FechaNacimiento}
                               />
                             </div>
                             <div className="mb-4">
@@ -131,7 +132,7 @@ const AgregarEmpleado = () => {
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="correoElectronico"
                                 type="email"
-                                placeholder="Correo Electrónico"
+                                placeholder={data.correoElectronico}
                               />
                             </div>
                             <div className="mb-4">
@@ -147,7 +148,7 @@ const AgregarEmpleado = () => {
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="telefono"
                                 type="tel"
-                                placeholder="Teléfono"
+                                placeholder={data.telefono}
                               />
                             </div>
                             <div className="mb-4">
@@ -167,7 +168,6 @@ const AgregarEmpleado = () => {
                                   <option>Activo</option>
                                   <option>Inactivo</option>
                                 </select>
-
                                 <div className="mb-4">
                                   <label
                                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -181,10 +181,9 @@ const AgregarEmpleado = () => {
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="salarioBruto"
                                     type="number"
-                                    placeholder="$10000"
+                                    placeholder={data.salarioBruto}
                                   />
                                 </div>
-
                                 <div className="mb-4">
                                   <label
                                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -198,7 +197,7 @@ const AgregarEmpleado = () => {
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="salarioNeto"
                                     type="number"
-                                    placeholder="Salario Neto"
+                                    placeholder={data.salarioNeto}
                                   />
                                 </div>
                                 <div className="mb-4">
@@ -214,7 +213,7 @@ const AgregarEmpleado = () => {
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="salarioDiario"
                                     type="number"
-                                    placeholder="Salario Diario"
+                                    placeholder={data.salarioDiario}
                                   />
                                 </div>
                                 <div className="mb-4">
@@ -230,7 +229,7 @@ const AgregarEmpleado = () => {
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="puesto"
                                     type="text"
-                                    placeholder="Puesto"
+                                    placeholder={data.puesto}
                                   />
                                 </div>
                                 <div className="mb-4">
@@ -246,10 +245,73 @@ const AgregarEmpleado = () => {
                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="horasLaborales"
                                     type="number"
-                                    placeholder="Horas Laborales"
+                                    placeholder={data.horasLaborales}
                                   />
                                 </div>
-
+                                <div className="mb-4">
+                                  <label
+                                    className="block text-gray-700 text-sm font-bold mb-2"
+                                    for="horasLaborales"
+                                  >
+                                    Hora de Entrada
+                                  </label>
+                                  <input
+                                    name="horarioEntrada"
+                                    onChange={handleOnChanged}
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="horarioEntrada"
+                                    type="time"
+                                    placeholder={data.horarioEntrada}
+                                  />
+                                </div>
+                                <div className="mb-4">
+                                  <label
+                                    className="block text-gray-700 text-sm font-bold mb-2"
+                                    for="horasLaborales"
+                                  >
+                                    Hora de Salida
+                                  </label>
+                                  <input
+                                    name="horarioSalida"
+                                    onChange={handleOnChanged}
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="horarioSalida"
+                                    type="time"
+                                    placeholder={data.horarioSalida}
+                                  />
+                                </div>{" "}
+                                <div className="mb-4">
+                                  <label
+                                    className="block text-gray-700 text-sm font-bold mb-2"
+                                    for="horasLaborales"
+                                  >
+                                    Hora salida a Lunch
+                                  </label>
+                                  <input
+                                    name="horarioSalidaLunch"
+                                    onChange={handleOnChanged}
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="horarioSalidaLunch"
+                                    type="time"
+                                    placeholder={data.horarioSalidaLunch}
+                                  />
+                                </div>{" "}
+                                <div className="mb-4">
+                                  <label
+                                    className="block text-gray-700 text-sm font-bold mb-2"
+                                    for="horasLaborales"
+                                  >
+                                    Hora de entrada de lunch
+                                  </label>
+                                  <input
+                                    name="horarioEntradaLunch"
+                                    onChange={handleOnChanged}
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="horarioEntradaLunch"
+                                    type="time"
+                                    placeholder={data.horarioEntradaLunch}
+                                  />
+                                </div>
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                   <svg
                                     className="fill-current h-4 w-4"
@@ -269,7 +331,6 @@ const AgregarEmpleado = () => {
                               >
                                 Editar
                               </button>
-
                             </div>
                           </form>
                         </div>

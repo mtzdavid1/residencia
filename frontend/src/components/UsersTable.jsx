@@ -1,35 +1,43 @@
 import React, { useState, useEffect } from "react";
-import Customer from "./CustomersTableItem";
+import UserTableItem from "./UserTableItem";
 import Image01 from "../images/user-40-01.jpg";
 import axios from "axios";
+import swal from "@sweetalert/with-react";
 
-function CustomersTable({ selectedItems }) {
+function UsersTable({ selectedItems }) {
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/api/empleados").then((res) => {
+    axios.get("http://localhost:3001/api/usuarios").then((res) => {
       setCustomers(res.data);
       setList(res.data);
     });
   }, []);
 
-  const [selectAll, setSelectAll] = useState(false);
-  const [isCheck, setIsCheck] = useState([]);
   const [list, setList] = useState([]);
 
-  const handleClick = (e) => {
-    const { id, checked } = e.target;
-    setSelectAll(false);
-    setIsCheck([...isCheck, id]);
-    if (!checked) {
-      setIsCheck(isCheck.filter((item) => item !== id));
-    }
+  const handleDelete = (id) => {
+    swal({
+      title: "¿Estás seguro?",
+      text: "Una vez eliminado, no podrás recuperar este registro",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        axios.delete(`http://localhost:3001/api/usuarios/${id}`);
+        swal("Registro eliminado", {
+          icon: "success",
+        }).then(() => {
+          setCustomers(
+            customers.filter((customer) => customer.idUsuario !== id)
+          );
+        });
+      } else {
+        swal("Registro no eliminado");
+      }
+    });
   };
-
-  useEffect(() => {
-    selectedItems(isCheck);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCheck]);
 
   return (
     <div className="bg-white shadow-lg rounded-sm border border-slate-200 relative">
@@ -47,7 +55,7 @@ function CustomersTable({ selectedItems }) {
             onChange={(e) => {
               setCustomers(
                 customers.filter((customer) =>
-                  customer.nombreCompleto
+                  customer.usuario
                     .toLowerCase()
                     .includes(e.target.value?.toLowerCase())
                 )
@@ -75,24 +83,16 @@ function CustomersTable({ selectedItems }) {
             <thead className="text-xs font-semibold uppercase text-slate-500 bg-slate-50 border-t border-b border-slate-200">
               <tr>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Nombre completo</div>
+                  <div className="font-semibold text-left">Usuario</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">
-                    Fecha nacimiento
-                  </div>
+                  <div className="font-semibold text-left">contraseña</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold">Correo Electronico</div>
+                  <div className="font-semibold">Rol</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Telefono</div>
-                </th>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Estado</div>
-                </th>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold">Fecha ingreso</div>
+                  <div className="font-semibold">Acciones</div>
                 </th>
               </tr>
             </thead>
@@ -100,18 +100,13 @@ function CustomersTable({ selectedItems }) {
             <tbody className="text-sm divide-y divide-slate-200">
               {customers.map((customer) => {
                 return (
-                  <Customer
-                    key={customer.idEmpleado}
-                    id={customer.idEmpleado}
-                    image={Image01}
-                    nombreCompleto={customer.nombreCompleto}
-                    FechaNacimiento={customer.fechaNacimiento}
-                    correoElectronico={customer.correo}
-                    telefono={customer.telefono}
-                    estado={customer.estado}
-                    fechaIngreso={customer.fechaIngreso}
-                    handleClick={handleClick}
-                    isChecked={isCheck.includes(customer.id)}
+                  <UserTableItem
+                    key={customer.idUsuario}
+                    id={customer.idUsuario}
+                    nombreCompleto={customer.usuario}
+                    FechaNacimiento={customer.contraseña}
+                    correoElectronico={customer.rol}
+                    handleDelete={handleDelete}
                   />
                 );
               })}
@@ -123,4 +118,4 @@ function CustomersTable({ selectedItems }) {
   );
 }
 
-export default CustomersTable;
+export default UsersTable;

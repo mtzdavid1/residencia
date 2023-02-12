@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import swal from "@sweetalert/with-react";
 
 const Nominas = () => {
   const navigate = useNavigate();
@@ -16,7 +17,9 @@ const Nominas = () => {
   }, []);
 
   useEffect(() => {
-    if (!localStorage.getItem("rol")) {
+    let rol = localStorage.getItem("rol");
+    if (rol !== "Admin" && rol !== "RH" && rol !== "IT") {
+      swal("Error", "No tienes permisos para acceder a esta página", "error");
       navigate("/login");
     }
   }, []);

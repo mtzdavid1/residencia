@@ -7,7 +7,10 @@ import DetallesEmpleado from "../screens/DetallesEmpleado";
 import NominaReport from "../screens/GenerarReporte";
 import Login from "../screens/Login";
 import Nominas from "../screens/Nominas";
-import EditarEmpleado from "../screens/EditarEmpleado"
+import EditarEmpleado from "../screens/EditarEmpleado";
+import Usuarios from "../screens/Usuarios";
+import AgregarUsuario from "../screens/AgregarUsuario";
+
 const Router = () => {
   return (
     <Routes>
@@ -19,7 +22,9 @@ const Router = () => {
       <Route path="/addpunch" element={<AddPunch />} />
       <Route path="/nominas/generar-reporte" element={<NominaReport />} />
       <Route path="/empleados/editar/:id" element={<EditarEmpleado />} />
-
+      <Route path="/empleados/editar/:id" element={<EditarEmpleado />} />
+      <Route path="/it/usuarios" element={<Usuarios />} />
+      <Route path="/it/usuarios/agregar" element={<AgregarUsuario />} />
     </Routes>
   );
 };

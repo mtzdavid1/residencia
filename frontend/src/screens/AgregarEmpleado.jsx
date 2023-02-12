@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Image01 from "../images/user-40-01.jpg";
+import swal from "@sweetalert/with-react";
 
 const AgregarEmpleado = () => {
   const navigate = useNavigate();
@@ -21,6 +22,10 @@ const AgregarEmpleado = () => {
     salarioDiario: "500",
     horasLaborales: "8",
     fechaIngreso: new Date(),
+    horarioEntrada: "",
+    horarioSalida: "",
+    horarioSalidaLunch: "",
+    horarioEntradaLunch: "",
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -31,10 +36,40 @@ const AgregarEmpleado = () => {
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
+    if (
+      data.nombreCompleto === "" ||
+      data.FechaNacimiento === "" ||
+      data.correoElectronico === "" ||
+      data.telefono === "" ||
+      data.estado === "" ||
+      data.puesto === "" ||
+      data.salarioBruto === "" ||
+      data.salarioNeto === "" ||
+      data.salarioDiario === "" ||
+      data.horasLaborales === "" ||
+      data.fechaIngreso === "" ||
+      data.horarioEntrada === "" ||
+      data.horarioSalida === "" ||
+      data.horarioSalidaLunch === "" ||
+      data.horarioEntradaLunch === ""
+    ) {
+      swal("Error", "Todos los campos son obligatorios", "error");
+      return;
+    }
     await axios
       .post("http://localhost:3001/api/empleados", data)
-      .then((res) => alert(res.data))
-      .catch((err) => alert(err));
+      .then((res) => {
+        swal(
+          "Empleado agregado",
+          "El empleado ha sido agregado",
+          "success"
+        ).then(() => {
+          navigate(-1);
+        });
+      })
+      .catch((err) => {
+        swal("Error", "Ha ocurrido un error", "error");
+      });
 
     setData({
       id: "",
@@ -50,11 +85,17 @@ const AgregarEmpleado = () => {
       salarioDiario: "",
       horasLaborales: "",
       fechaIngreso: "",
+      horarioEntrada: "",
+      horarioSalida: "",
+      horarioSalidaLunch: "",
+      horarioEntradaLunch: "",
     });
   };
 
   useEffect(() => {
-    if (!localStorage.getItem("rol")) {
+    let rol = localStorage.getItem("rol");
+    if (rol !== "Admin" && rol !== "RH" && rol !== "IT") {
+      swal("Error", "No tienes permisos para acceder a esta página", "error");
       navigate("/login");
     }
   }, []);
@@ -165,7 +206,6 @@ const AgregarEmpleado = () => {
                                   <option>Activo</option>
                                   <option>Inactivo</option>
                                 </select>
-
                                 <div className="mb-4">
                                   <label
                                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -182,7 +222,6 @@ const AgregarEmpleado = () => {
                                     placeholder="$10000"
                                   />
                                 </div>
-
                                 <div className="mb-4">
                                   <label
                                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -247,7 +286,70 @@ const AgregarEmpleado = () => {
                                     placeholder="Horas Laborales"
                                   />
                                 </div>
-
+                                <div className="mb-4">
+                                  <label
+                                    className="block text-gray-700 text-sm font-bold mb-2"
+                                    for="horasLaborales"
+                                  >
+                                    Hora de Entrada
+                                  </label>
+                                  <input
+                                    name="horarioEntrada"
+                                    onChange={handleOnChanged}
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="horarioEntrada"
+                                    type="time"
+                                    placeholder="Hora de Entrada"
+                                  />
+                                </div>
+                                <div className="mb-4">
+                                  <label
+                                    className="block text-gray-700 text-sm font-bold mb-2"
+                                    for="horasLaborales"
+                                  >
+                                    Hora de Salida
+                                  </label>
+                                  <input
+                                    name="horarioSalida"
+                                    onChange={handleOnChanged}
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="horarioSalida"
+                                    type="time"
+                                    placeholder="Hora de Salida"
+                                  />
+                                </div>{" "}
+                                <div className="mb-4">
+                                  <label
+                                    className="block text-gray-700 text-sm font-bold mb-2"
+                                    for="horasLaborales"
+                                  >
+                                    Hora salida a Lunch
+                                  </label>
+                                  <input
+                                    name="horarioSalidaLunch"
+                                    onChange={handleOnChanged}
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="horarioSalidaLunch"
+                                    type="time"
+                                    placeholder="Hora salida a Lunch"
+                                  />
+                                </div>{" "}
+                                <div className="mb-4">
+                                  <label
+                                    className="block text-gray-700 text-sm font-bold mb-2"
+                                    for="horasLaborales"
+                                  >
+                                    Hora de entrada de lunch
+                                  </label>
+                                  <input
+                                    name="horarioEntradaLunch"
+                                    onChange={handleOnChanged}
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="horarioEntradaLunch"
+                                    type="time"
+                                    placeholder="Hora de entrada de lunch"
+                                  />
+                                </div>
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                   <svg
                                     className="fill-current h-4 w-4"
@@ -267,9 +369,6 @@ const AgregarEmpleado = () => {
                               >
                                 Agregar
                               </button>
-                              <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-12"  onClick={() => navigate("/empleados/agregar")}>Editar</button>
-
-
                             </div>
                           </form>
                         </div>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import swal from "@sweetalert/with-react";
 
 const DetallesEmpleado = () => {
   const navigate = useNavigate();
@@ -37,6 +38,27 @@ const DetallesEmpleado = () => {
     return daysOfWeek[date.getDay()];
   };
 
+  const deleteCustomer = (id) => {
+    swal({
+      title: "¿Estás seguro?",
+      text: "Una vez eliminado, no podrás recuperar este registro",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        axios.delete(`http://localhost:3001/api/empleados/${id}`);
+        swal("Registro eliminado", {
+          icon: "success",
+        }).then(() => {
+          navigate(-1);
+        });
+      } else {
+        swal("Registro no eliminado");
+      }
+    });
+  };
+
   useEffect(() => {
     axios.get(`http://localhost:3001/api/empleados/${id}`).then((res) => {
       setCustomers(res.data);
@@ -64,7 +86,9 @@ const DetallesEmpleado = () => {
   }, []);
 
   useEffect(() => {
-    if (!localStorage.getItem("rol")) {
+    let rol = localStorage.getItem("rol");
+    if (rol !== "Admin" && rol !== "RH" && rol !== "IT") {
+      swal("Error", "No tienes permisos para acceder a esta página", "error");
       navigate("/login");
     }
   }, []);
@@ -169,7 +193,22 @@ const DetallesEmpleado = () => {
                       {customers.estado}
                     </dd>
                   </div>
-                  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-12"  onClick={() => navigate(`/empleados/editar/${customers.idEmpleado}`)}>Editar</button>
+                  <button
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-12"
+                    onClick={() =>
+                      navigate(`/empleados/editar/${customers.idEmpleado}`, {
+                        state: { customers },
+                      })
+                    }
+                  >
+                    Editar
+                  </button>
+                  <button
+                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-12"
+                    onClick={() => deleteCustomer(customers.idEmpleado)}
+                  >
+                    Eliminar
+                  </button>
                 </dl>
               </div>
             </div>
